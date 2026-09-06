@@ -32,10 +32,39 @@ npm start
 1. **板塊泡泡圖** — XLK / XLF / XLE 等產業 ETF；X≈近 5 日資金流代理、Y≈加速度、大小≈約 20 日幅度；四象限潮汐狀態；支援平移／縮放
 2. **排行榜** — Net Buy / Net Sell、Today / 5 Days，含長條視覺化
 3. **觀察清單** — 本機 localStorage 儲存代碼
-4. **今日亮點** — 大型股動能條、SPX proxy、as of 時間戳
+4. **今日亮點** — 大型股動能條、SPX proxy、資料快照（snapshot）時間戳
 5. **明日 SPX 投票** — 本機 bull/bear 聚合（趣味用）
 6. **設定** — 台股紅漲／美股綠漲色系、深／淺色、字級
 7. **免責聲明** — 非投資建議
+
+---
+
+
+## 每日自動更新 · Daily market refresh (Vercel Cron)
+
+No push notifications — server-side cache refresh only.
+
+| Item | Value |
+|------|--------|
+| Path | `/api/cron/refresh` |
+| Schedule | `30 20 * * 1-5` (20:30 UTC Mon–Fri) |
+| Local meaning | ≈ after US cash close · ~04:30 HKT next calendar day |
+| Hobby | Daily cron supported on Hobby |
+
+### Setup on Vercel
+
+1. In the Vercel project → **Settings → Environment Variables**, add:
+   - `CRON_SECRET` — a long random string (Production; Preview optional)
+2. Redeploy so the cron + env take effect.
+3. Vercel invokes the route with `Authorization: Bearer ${CRON_SECRET}` and/or `x-vercel-cron: 1`. Manual test:
+
+```bash
+curl -H "Authorization: Bearer $CRON_SECRET" https://YOUR_DOMAIN/api/cron/refresh
+```
+
+The handler loads fresh quotes, runs `revalidateTag('market')`, and returns `{ ok, asOf, source }`. `/api/market` serves data from `unstable_cache` (tag `market`, ~12h time-based revalidate as a safety net).
+
+Defined in `vercel.json`.
 
 ---
 
@@ -49,7 +78,7 @@ npm start
    - `acceleration` ≈ 今日動能 − 滯後窗動能
    - `magnitude20d` ≈ 累積動能絕對值（控制泡泡大小）
    - 潮汐狀態依 `flow5d` 與 `acceleration` 正負象限分類
-3. 畫面標示 as of 時間與來源：`live-quotes+synthetic-flow` 或 `demo`
+3. 畫面標示 **資料快照（snapshot）** 時間與來源：`live-quotes+synthetic-flow` 或 `demo`（非即時 tick）
 4. 同一 UTC 日期的 demo 亂數種子固定
 
 這些指標是視覺化代理，不是真實法人買賣超。
@@ -61,6 +90,7 @@ npm start
 - Next.js 14 (App Router) + TypeScript + Tailwind CSS
 - D3.js 泡泡圖（pan / zoom）
 - localStorage（觀察清單、設定、投票）
+- Vercel Cron + `unstable_cache` / `revalidateTag`（每日行情快照）
 
 ---
 

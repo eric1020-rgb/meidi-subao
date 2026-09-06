@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
-import { loadMarketData } from "@/lib/data";
+import { getCachedMarketData } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
-export const revalidate = 0;
 
 export async function GET() {
   try {
-    const data = await loadMarketData();
+    const data = await getCachedMarketData();
     return NextResponse.json(data);
   } catch (e) {
     console.error(e);

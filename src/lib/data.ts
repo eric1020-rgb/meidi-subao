@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { SECTOR_ETFS, MEGA_CAPS, classifyTide } from "./sectors";
 import type { MarketPayload, SectorPoint, StockHighlight } from "./types";
 
@@ -115,7 +116,7 @@ export async function fetchQuotes(
         )}?interval=1d&range=5d`;
         const res = await fetch(url, {
           headers: { "User-Agent": "Mozilla/5.0 MeidiSubao/1.0" },
-          next: { revalidate: 300 },
+          cache: "no-store",
         });
         if (!res.ok) return;
         const json = await res.json();
@@ -137,6 +138,7 @@ export async function fetchQuotes(
   return map;
 }
 
+/** Uncached load — used by cron refresh and as the cache factory. */
 export async function loadMarketData(): Promise<MarketPayload> {
   const symbols = [
     ...SECTOR_ETFS.map((s) => s.symbol),
@@ -154,3 +156,14 @@ export async function loadMarketData(): Promise<MarketPayload> {
   }
   return synthesizeMarket();
 }
+
+/**
+ * Cached market snapshot for /api/market.
+ * Tag `market` is revalidated by /api/cron/refresh (Vercel Cron Mon–Fri 20:30 UTC).
+ * Time-based revalidate ~12h as a safety net between cron runs.
+ */
+export const getCachedMarketData = unstable_cache(
+  async () => loadMarketData(),
+  ["market-data"],
+  { tags: ["market"], revalidate: 43200 }
+);

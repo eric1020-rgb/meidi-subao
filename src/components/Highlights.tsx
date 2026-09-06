@@ -32,8 +32,8 @@ export default function Highlights({ items, spxChangePct, asOf, source }: Props)
         >
           SPX proxy {formatPct(spxChangePct)}
         </span>
-        <span className="ml-auto text-[10px] text-ink-faint">
-          as of {asOfLocal} HKT · {source === "demo" ? "demo data" : "quotes + synthetic flow"}
+        <span className="ml-auto text-[10px] text-ink-faint" title="Daily snapshot refreshed after US market close (cron); not live tick data">
+          資料快照 · snapshot {asOfLocal} HKT · {source === "demo" ? "demo data" : "quotes + synthetic flow"}
         </span>
       </div>
       <div className="flex gap-2 overflow-x-auto pb-1">
