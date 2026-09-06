@@ -71,3 +71,20 @@ export interface NewsPayload {
   error?: boolean;
   message?: string;
 }
+
+export interface MoverItem {
+  symbol: string;
+  name: string;
+  price: number;
+  changePct: number;
+  volume?: number;
+}
+
+export interface MoversPayload {
+  gainers: MoverItem[];
+  losers: MoverItem[];
+  asOf: string;
+  source: string;
+  error?: boolean;
+  message?: string;
+}

@@ -10,6 +10,7 @@ import TideSidebar from "./TideSidebar";
 import BubbleChart from "./BubbleChart";
 import Rankings from "./Rankings";
 import NewsFeed from "./NewsFeed";
+import Movers from "./Movers";
 import Watchlist from "./Watchlist";
 import Highlights from "./Highlights";
 import VotePanel from "./VotePanel";
@@ -56,7 +57,7 @@ export default function Dashboard({ initialData }: Props) {
     setSelected(s?.symbol ?? null);
   }, []);
 
-  const showMarketChrome = view !== "news";
+  const showMarketChrome = view !== "news" && view !== "movers";
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-[1600px] flex-col">
@@ -75,6 +76,10 @@ export default function Dashboard({ initialData }: Props) {
         {view === "news" ? (
           <main className="min-h-[480px]">
             <NewsFeed />
+          </main>
+        ) : view === "movers" ? (
+          <main className="min-h-[480px]">
+            <Movers />
           </main>
         ) : (
           <div className="grid grid-cols-1 gap-3 lg:grid-cols-[200px_1fr_280px]">

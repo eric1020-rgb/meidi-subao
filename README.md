@@ -37,6 +37,7 @@ npm start
 6. **設定** — 台股紅漲／美股綠漲色系、深／淺色、字級
 7. **免責聲明** — 非投資建議
 8. **當日新聞** — 美股／財經同日（或最新）頭條；`/api/news` 彙整公開 RSS；約 90s 自動更新 + 手動重新整理
+9. **漲跌榜** — 當日 Top 漲／跌（各 10，合計 20）；`/api/movers`；約 90s 自動更新 + 手動重新整理
 
 ---
 
@@ -61,6 +62,27 @@ npm start
 Feeds are fetched server-side, parsed, deduped by title, sorted by time. Prefer same-UTC-day items; if sparse, fall back to latest headlines. If all upstream feeds fail, the API returns demo stubs with `error: true` so the page never crashes.
 
 **Disclaimer:** aggregated for information only — not investment advice.
+
+---
+
+## 漲跌榜 · Movers
+
+| Item | Value |
+|------|--------|
+| UI | Header tab **漲跌榜** |
+| API | `GET /api/movers` → `{ gainers, losers, asOf, source, error? }` |
+| Client refresh | ~90s auto + manual **重新整理** (`?refresh=1` bypasses short cache) |
+| Server cache | ~45s in-memory |
+
+### Data (free, no API key)
+
+1. **Primary:** Yahoo Finance predefined screener (`day_gainers` / `day_losers`) — liquid US equities by session % change.
+2. **Fallback:** Rank a built-in liquid universe (mega-caps + sector leads + liquid large names) via Yahoo chart quotes.
+3. **Demo stubs** if both fail — UI never empty/crashes.
+
+Colors respect 台股紅漲／美股綠漲 setting (`--up` / `--down`).
+
+**Disclaimer:** for information only — not investment advice.
 
 ---
 ## 每日自動更新 · Daily market refresh (Vercel Cron)
