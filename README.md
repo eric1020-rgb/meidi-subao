@@ -36,10 +36,33 @@ npm start
 5. **明日 SPX 投票** — 本機 bull/bear 聚合（趣味用）
 6. **設定** — 台股紅漲／美股綠漲色系、深／淺色、字級
 7. **免責聲明** — 非投資建議
+8. **當日新聞** — 美股／財經同日（或最新）頭條；`/api/news` 彙整公開 RSS；約 90s 自動更新 + 手動重新整理
 
 ---
 
 
+
+## 當日新聞 · Today's News
+
+| Item | Value |
+|------|--------|
+| UI | Header tab **當日新聞** |
+| API | `GET /api/news` → `{ items, asOf, source, error? }` |
+| Client refresh | ~90s auto + manual **重新整理** (`?refresh=1` bypasses short cache) |
+| Server cache | ~45s in-memory + fetch revalidate |
+
+### Sources (free public RSS, no API key)
+
+- CNBC Business / Finance device RSS
+- MarketWatch Top Stories & Market Pulse
+- Yahoo Finance Top Financial Stories
+- Investing.com news RSS
+
+Feeds are fetched server-side, parsed, deduped by title, sorted by time. Prefer same-UTC-day items; if sparse, fall back to latest headlines. If all upstream feeds fail, the API returns demo stubs with `error: true` so the page never crashes.
+
+**Disclaimer:** aggregated for information only — not investment advice.
+
+---
 ## 每日自動更新 · Daily market refresh (Vercel Cron)
 
 No push notifications — server-side cache refresh only.

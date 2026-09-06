@@ -5,10 +5,11 @@ import type { MarketPayload, SectorPoint, TideState } from "@/lib/types";
 import { useSettings } from "@/hooks/useSettings";
 import { useWatchlist } from "@/hooks/useWatchlist";
 import { useVote } from "@/hooks/useVote";
-import Header from "./Header";
+import Header, { type AppView } from "./Header";
 import TideSidebar from "./TideSidebar";
 import BubbleChart from "./BubbleChart";
 import Rankings from "./Rankings";
+import NewsFeed from "./NewsFeed";
 import Watchlist from "./Watchlist";
 import Highlights from "./Highlights";
 import VotePanel from "./VotePanel";
@@ -21,7 +22,7 @@ interface Props {
 
 export default function Dashboard({ initialData }: Props) {
   const [data, setData] = useState(initialData);
-  const [view, setView] = useState<"bubbles" | "rankings">("bubbles");
+  const [view, setView] = useState<AppView>("bubbles");
   const [filter, setFilter] = useState<TideState | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -55,50 +56,60 @@ export default function Dashboard({ initialData }: Props) {
     setSelected(s?.symbol ?? null);
   }, []);
 
+  const showMarketChrome = view !== "news";
+
   return (
     <div className="mx-auto flex min-h-dvh max-w-[1600px] flex-col">
       <Header view={view} onView={setView} onOpenSettings={() => setSettingsOpen(true)} />
 
       <div className="space-y-3 p-3">
-        <Highlights
-          items={data.highlights}
-          spxChangePct={data.spxChangePct}
-          asOf={data.asOf}
-          source={data.source}
-        />
+        {showMarketChrome && (
+          <Highlights
+            items={data.highlights}
+            spxChangePct={data.spxChangePct}
+            asOf={data.asOf}
+            source={data.source}
+          />
+        )}
 
-        <div className="grid grid-cols-1 gap-3 lg:grid-cols-[200px_1fr_280px]">
-          <TideSidebar sectors={data.sectors} active={filter} onFilter={setFilter} />
-
+        {view === "news" ? (
           <main className="min-h-[480px]">
-            {view === "bubbles" ? (
-              <BubbleChart sectors={sectors} selected={selected} onSelect={onSelect} />
-            ) : (
-              <Rankings
-                sectors={data.sectors}
-                filterState={filter}
-                onSelect={(s) => {
-                  setSelected(s.symbol);
-                  setView("bubbles");
-                }}
-              />
-            )}
+            <NewsFeed />
           </main>
+        ) : (
+          <div className="grid grid-cols-1 gap-3 lg:grid-cols-[200px_1fr_280px]">
+            <TideSidebar sectors={data.sectors} active={filter} onFilter={setFilter} />
 
-          <div className="flex flex-col gap-3">
-            <Watchlist
-              watchlist={watch.list}
-              onAdd={watch.add}
-              onRemove={watch.remove}
-              onToggle={watch.toggle}
-              megaCaps={data.megaCaps}
-              sectors={data.sectors}
-            />
-            <VotePanel vote={vote} onCast={cast} />
+            <main className="min-h-[480px]">
+              {view === "bubbles" ? (
+                <BubbleChart sectors={sectors} selected={selected} onSelect={onSelect} />
+              ) : (
+                <Rankings
+                  sectors={data.sectors}
+                  filterState={filter}
+                  onSelect={(s) => {
+                    setSelected(s.symbol);
+                    setView("bubbles");
+                  }}
+                />
+              )}
+            </main>
+
+            <div className="flex flex-col gap-3">
+              <Watchlist
+                watchlist={watch.list}
+                onAdd={watch.add}
+                onRemove={watch.remove}
+                onToggle={watch.toggle}
+                megaCaps={data.megaCaps}
+                sectors={data.sectors}
+              />
+              <VotePanel vote={vote} onCast={cast} />
+            </div>
           </div>
-        </div>
+        )}
 
-        {selected && (
+        {selected && showMarketChrome && (
           <SelectedCard
             sector={data.sectors.find((s) => s.symbol === selected)}
             onClose={() => setSelected(null)}

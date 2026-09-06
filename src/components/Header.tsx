@@ -1,8 +1,10 @@
 "use client";
 
+export type AppView = "bubbles" | "rankings" | "news";
+
 interface Props {
-  view: "bubbles" | "rankings";
-  onView: (v: "bubbles" | "rankings") => void;
+  view: AppView;
+  onView: (v: AppView) => void;
   onOpenSettings: () => void;
 }
 
@@ -25,6 +27,9 @@ export default function Header({ view, onView, onOpenSettings }: Props) {
         </NavBtn>
         <NavBtn active={view === "rankings"} onClick={() => onView("rankings")}>
           排行榜
+        </NavBtn>
+        <NavBtn active={view === "news"} onClick={() => onView("news")}>
+          當日新聞
         </NavBtn>
       </nav>
 

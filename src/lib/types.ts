@@ -55,3 +55,19 @@ export interface VoteTally {
   myVote: "bull" | "bear" | null;
   dateKey: string;
 }
+
+export interface NewsItem {
+  id: string;
+  title: string;
+  source: string;
+  publishedAt: string;
+  url: string;
+}
+
+export interface NewsPayload {
+  items: NewsItem[];
+  asOf: string;
+  source: string;
+  error?: boolean;
+  message?: string;
+}
