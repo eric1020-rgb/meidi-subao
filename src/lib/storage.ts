@@ -1,8 +1,8 @@
 import type { AppSettings, VoteTally } from "./types";
 
-const WATCHLIST_KEY = "tide-us-watchlist";
-const SETTINGS_KEY = "tide-us-settings";
-const VOTE_KEY = "tide-us-vote";
+const WATCHLIST_KEY = "meidi-subao-watchlist";
+const SETTINGS_KEY = "meidi-subao-settings";
+const VOTE_KEY = "meidi-subao-vote";
 
 export const DEFAULT_SETTINGS: AppSettings = {
   colorScheme: "us",

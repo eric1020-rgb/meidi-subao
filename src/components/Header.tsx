@@ -13,7 +13,7 @@ export default function Header({ view, onView, onOpenSettings }: Props) {
         <WaveLogo />
         <div>
           <div className="text-sm font-bold tracking-tight text-ink">
-            Tide US <span className="font-normal text-ink-muted">美股潮汐</span>
+            美帝速報 <span className="font-normal text-ink-muted">US Market Brief</span>
           </div>
           <div className="text-[10px] text-ink-faint">Sector rotation · capital-flow proxy</div>
         </div>

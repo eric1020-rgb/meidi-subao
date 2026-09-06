@@ -1,8 +1,8 @@
 {
-  "name": "tide-us",
+  "name": "meidi-subao",
   "version": "1.0.0",
   "private": true,
-  "description": "Tide US / 美股潮汐 — US sector rotation & capital-flow dashboard",
+  "description": "美帝速報 / US Market Brief — US sector rotation & capital-flow dashboard",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

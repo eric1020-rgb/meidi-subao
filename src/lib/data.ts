@@ -114,7 +114,7 @@ export async function fetchQuotes(
           symbol
         )}?interval=1d&range=5d`;
         const res = await fetch(url, {
-          headers: { "User-Agent": "Mozilla/5.0 TideUS/1.0" },
+          headers: { "User-Agent": "Mozilla/5.0 MeidiSubao/1.0" },
           next: { revalidate: 300 },
         });
         if (!res.ok) return;

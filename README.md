@@ -1,6 +1,6 @@
-# Tide US · 美股潮汐
+# 美帝速報 · US Market Brief
 
-美股產業輪動／資金流代理儀表板（靈感來自台灣市場的板塊潮汐視覺化，**原創品牌與實作**，非 tide-tw 官方產品）。
+美股產業輪動／資金流代理儀表板（靈感來自台灣市場的板塊潮汐視覺化，**原創品牌與實作**）。
 
 US sector rotation & capital-flow **proxy** dashboard. Educational demo — **not investment advice**.
 
@@ -9,7 +9,7 @@ US sector rotation & capital-flow **proxy** dashboard. Educational demo — **no
 ## 快速開始 · How to run
 
 ```bash
-cd tide-us
+cd meidi-subao
 npm install
 npm run dev
 ```

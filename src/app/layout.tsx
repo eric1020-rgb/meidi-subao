@@ -2,9 +2,9 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Tide US · 美股潮汐",
+  title: "美帝速報 · US Market Brief",
   description:
-    "US sector rotation & capital-flow proxy dashboard. Educational demo — not investment advice.",
+    "美帝速報 — US sector rotation & capital-flow proxy dashboard. Educational demo — not investment advice.",
   icons: { icon: "/favicon.svg" },
 };
 

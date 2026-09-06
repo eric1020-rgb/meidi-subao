@@ -2,7 +2,7 @@ export default function Disclaimer() {
   return (
     <footer className="border-t border-white/5 px-3 py-4 text-center text-[10px] leading-relaxed text-ink-faint">
       <div className="mb-1 flex items-center justify-center gap-2 text-xs text-ink-muted">
-        <span className="font-semibold text-ink">Tide US · 美股潮汐</span>
+        <span className="font-semibold text-ink">美帝速報 · US Market Brief</span>
         <span>·</span>
         <span>local demo dashboard</span>
       </div>
