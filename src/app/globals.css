@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-scale: 16px;
+  --surface: #0a0a0a;
+  --surface-2: #141414;
+  --surface-3: #1c1c1c;
+  --ink: #f4f4f5;
+  --ink-muted: #a1a1aa;
+  --ink-faint: #71717a;
+  --grid: rgba(255, 255, 255, 0.06);
+  --bubble-label: #0a0a0a;
+  --tide-high: #22c55e;
+  --tide-rotation: #eab308;
+  --tide-wait: #94a3b8;
+  --tide-low: #ef4444;
+  --up: #22c55e;
+  --down: #ef4444;
+}
+
+html.light {
+  --surface: #f4f4f5;
+  --surface-2: #ffffff;
+  --surface-3: #e4e4e7;
+  --ink: #18181b;
+  --ink-muted: #52525b;
+  --ink-faint: #71717a;
+  --grid: rgba(0, 0, 0, 0.06);
+  --bubble-label: #18181b;
+}
+
+html {
+  font-size: var(--font-scale);
+}
+
+body {
+  background: var(--surface);
+  color: var(--ink);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans TC",
+    "PingFang TC", "Microsoft JhengHei", sans-serif;
+  min-height: 100dvh;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.chart-tooltip {
+  position: absolute;
+  pointer-events: none;
+  z-index: 20;
+  max-width: 240px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(20, 20, 20, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f4f4f5;
+  font-size: 11px;
+  line-height: 1.4;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+html.light .chart-tooltip {
+  background: rgba(255, 255, 255, 0.98);
+  color: #18181b;
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+/* scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(161, 161, 170, 0.35);
+  border-radius: 999px;
+}
