@@ -78,6 +78,10 @@ export interface MoverItem {
   price: number;
   changePct: number;
   volume?: number;
+  /** GICS-style sector (English), e.g. Technology */
+  sector?: string;
+  /** Optional Traditional Chinese sector label */
+  sectorZh?: string;
 }
 
 export interface MoversPayload {

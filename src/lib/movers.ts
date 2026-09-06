@@ -1,6 +1,7 @@
 import type { MoverItem, MoversPayload } from "./types";
 import { fetchQuotes } from "./data";
 import { MEGA_CAPS, SECTOR_ETFS } from "./sectors";
+import { attachSector, resolveSectors } from "./stockSectors";
 
 const USER_AGENT = "Mozilla/5.0 (compatible; MeidiSubao/1.0; +https://meidi-subao.vercel.app)";
 const FETCH_TIMEOUT_MS = 12_000;
@@ -132,12 +133,17 @@ function mapQuote(q: Record<string, unknown>): MoverItem | null {
       : typeof q.dayvolume === "number"
         ? q.dayvolume
         : undefined;
+  const sectorRaw =
+    (typeof q.sectorDisp === "string" && q.sectorDisp) ||
+    (typeof q.sector === "string" && q.sector) ||
+    undefined;
   return {
     symbol,
     name: String(name).replace(/\s+/g, " ").trim(),
     price: Math.round(price * 100) / 100,
     changePct: Math.round(changePct * 100) / 100,
     volume,
+    ...(sectorRaw ? { sector: sectorRaw } : {}),
   };
 }
 
@@ -253,9 +259,24 @@ export async function loadMovers(force = false): Promise<MoversPayload> {
     message = "Upstream quotes unreachable — showing demo stubs";
   }
 
+  gainers = gainers.slice(0, LIST_SIZE);
+  losers = losers.slice(0, LIST_SIZE);
+
+  // Attach sector (local map + Yahoo assetProfile for unknowns)
+  try {
+    const symbols = Array.from(new Set([...gainers, ...losers].map((m) => m.symbol)));
+    const sectorMap = await resolveSectors(symbols, { fetchRemote: true });
+    gainers = gainers.map((m) => attachSector(m, sectorMap));
+    losers = losers.map((m) => attachSector(m, sectorMap));
+  } catch {
+    const empty = {};
+    gainers = gainers.map((m) => attachSector(m, empty));
+    losers = losers.map((m) => attachSector(m, empty));
+  }
+
   const payload: MoversPayload = {
-    gainers: gainers.slice(0, LIST_SIZE),
-    losers: losers.slice(0, LIST_SIZE),
+    gainers,
+    losers,
     asOf: new Date().toISOString(),
     source,
     error: error || undefined,

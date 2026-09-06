@@ -164,6 +164,31 @@ export default function Movers() {
   );
 }
 
+
+function SectorBadge({ sector, sectorZh }: { sector?: string; sectorZh?: string }) {
+  const known = sector && sector !== "Unknown";
+  if (!known) {
+    return (
+      <span
+        className="inline-block rounded-md border border-white/5 bg-white/[0.03] px-1.5 py-0.5 text-[10px] text-ink-faint"
+        title="Sector unavailable"
+      >
+        —
+      </span>
+    );
+  }
+  const display = sectorZh || sector!;
+  const title = sectorZh ? `${sector} · ${sectorZh}` : sector!;
+  return (
+    <span
+      className="inline-block max-w-[6.5rem] truncate rounded-md border border-white/10 bg-white/[0.06] px-1.5 py-0.5 text-[10px] font-medium text-ink-muted"
+      title={title}
+    >
+      {display}
+    </span>
+  );
+}
+
 function SubTab({
   active,
   onClick,
@@ -207,12 +232,13 @@ function MoverTable({
         </span>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[280px] text-left text-xs">
+        <table className="w-full min-w-[340px] text-left text-xs">
           <thead>
             <tr className="text-[10px] uppercase tracking-wide text-ink-faint">
               <th className="px-2 py-1.5 font-medium">#</th>
               <th className="px-2 py-1.5 font-medium">代號</th>
               <th className="px-2 py-1.5 font-medium">名稱</th>
+              <th className="px-2 py-1.5 font-medium">產業</th>
               <th className="px-2 py-1.5 text-right font-medium">價格</th>
               <th className="px-2 py-1.5 text-right font-medium">漲跌%</th>
               <th className="px-2 py-1.5 text-right font-medium">成交量</th>
@@ -227,6 +253,9 @@ function MoverTable({
                   <td className="px-2 py-2 font-semibold text-ink">{row.symbol}</td>
                   <td className="max-w-[120px] truncate px-2 py-2 text-ink-muted" title={row.name}>
                     {row.name}
+                  </td>
+                  <td className="px-2 py-2">
+                    <SectorBadge sector={row.sector} sectorZh={row.sectorZh} />
                   </td>
                   <td className="px-2 py-2 text-right tabular-nums text-ink">{formatPrice(row.price)}</td>
                   <td
@@ -243,7 +272,7 @@ function MoverTable({
             })}
             {items.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-3 py-8 text-center text-ink-muted">
+                <td colSpan={7} className="px-3 py-8 text-center text-ink-muted">
                   目前沒有資料
                 </td>
               </tr>
