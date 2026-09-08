@@ -92,3 +92,70 @@ export interface MoversPayload {
   error?: boolean;
   message?: string;
 }
+
+/** Index / ETF performance row used in daily & weekly wraps */
+export interface SummaryIndexRow {
+  symbol: string;
+  name: string;
+  nameZh?: string;
+  changePct: number;
+  price?: number;
+}
+
+export interface SummaryHighlight {
+  text: string;
+  kind?: "up" | "down" | "neutral" | "news";
+}
+
+export interface DailySummaryPayload {
+  asOf: string;
+  source: string;
+  sessionLabel: string;
+  indices: SummaryIndexRow[];
+  sectorLeaders: SummaryIndexRow[];
+  sectorLaggards: SummaryIndexRow[];
+  topGainers: { symbol: string; name: string; changePct: number }[];
+  topLosers: { symbol: string; name: string; changePct: number }[];
+  highlights: SummaryHighlight[];
+  error?: boolean;
+  message?: string;
+}
+
+export interface WeeklySummaryPayload {
+  asOf: string;
+  source: string;
+  weekLabel: string;
+  indices: SummaryIndexRow[];
+  sectorLeaders: SummaryIndexRow[];
+  sectorLaggards: SummaryIndexRow[];
+  themes: { title: string; source?: string; url?: string }[];
+  highlights: SummaryHighlight[];
+  error?: boolean;
+  message?: string;
+}
+
+export type CalendarImportance = "high" | "medium" | "low";
+
+export interface CalendarEvent {
+  id: string;
+  date: string;
+  /** Display time in HKT, e.g. "08:30" or "全天" */
+  timeHkt: string;
+  /** ISO timestamp if known */
+  atIso?: string;
+  name: string;
+  nameZh?: string;
+  country?: string;
+  importance: CalendarImportance;
+  forecast?: string;
+  previous?: string;
+}
+
+export interface CalendarSummaryPayload {
+  asOf: string;
+  source: string;
+  rangeLabel: string;
+  events: CalendarEvent[];
+  error?: boolean;
+  message?: string;
+}

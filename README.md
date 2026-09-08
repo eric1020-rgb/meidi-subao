@@ -38,6 +38,7 @@ npm start
 7. **免責聲明** — 非投資建議
 8. **當日新聞** — 美股／財經同日（或最新）頭條；`/api/news` 彙整公開 RSS；約 90s 自動更新 + 手動重新整理
 9. **漲跌榜** — 當日 Top 漲／跌（各 10，合計 20）；`/api/movers`；約 90s 自動更新 + 手動重新整理
+10. **總結** — 每日盤後總結、每周股市總結、未來一周大事預期；`/api/summary/*`；手動重新整理 + 每日輕量自動更新
 
 ---
 
@@ -85,6 +86,37 @@ Colors respect 台股紅漲／美股綠漲 setting (`--up` / `--down`).
 **Disclaimer:** for information only — not investment advice.
 
 ---
+## 總結 · Market Wrap
+
+| Item | Value |
+|------|--------|
+| UI | Header tab **總結**（子區塊：每日盤後／每周總結／未來一周大事） |
+| APIs | `GET /api/summary/daily` · `GET /api/summary/weekly` · `GET /api/summary/calendar` |
+| Client refresh | Manual **重新整理**；每日盤後約 120s 輕量自動更新（`?refresh=1` 略過短快取） |
+| Server cache | ~60s in-memory |
+
+### Daily wrap（每日盤後）
+
+- Major indices: SPY / QQQ / DIA / IWM via Yahoo chart quotes
+- Sector ETF leaders & laggards (existing sector universe)
+- Top movers summary (reuses `/api/movers` logic)
+- Bullet highlights + recent RSS headlines
+
+### Weekly wrap（每周總結）
+
+- ~5 trading-day performance of indices & sectors (Yahoo `range=5d`)
+- Notable themes from recent news RSS (reuses news feeds)
+
+### Upcoming week calendar（未來一周大事）
+
+- Primary: public Forex Factory week JSON (`ff_calendar_thisweek.json`) — USD High/Medium events, times labeled **HKT**
+- Fallback: curated “expected” macro windows (CPI / Claims / Fed watch) so UI never empty
+- Framed as **expected** catalysts — not a paid calendar product; schedules can slip
+
+**Disclaimer:** wraps & calendar for information only — **not investment advice**.
+
+---
+
 ## 每日自動更新 · Daily market refresh (Vercel Cron)
 
 No push notifications — server-side cache refresh only.
