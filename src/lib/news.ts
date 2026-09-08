@@ -1,4 +1,5 @@
 import type { NewsItem, NewsPayload } from "./types";
+import { translateTitlesToZhHant } from "./translate";
 
 const USER_AGENT = "Mozilla/5.0 (compatible; MeidiSubao/1.0; +https://meidi-subao.vercel.app)";
 const FETCH_TIMEOUT_MS = 10_000;
@@ -201,10 +202,33 @@ export async function loadNews(force = false): Promise<NewsPayload> {
   const filler = deduped.filter((i) => !sameIds.has(i.id));
   const items = [...sameDay, ...filler].slice(0, 50);
 
+  // Attach Traditional Chinese titles (best-effort; never fail the feed).
+  let withZh = items;
+  try {
+    const map = await translateTitlesToZhHant(items.map((i) => i.title));
+    withZh = items.map((i) => {
+      const titleZh = map.get(i.title);
+      return titleZh ? { ...i, titleZh } : i;
+    });
+  } catch {
+    withZh = items;
+  }
+
   let payload: NewsPayload;
-  if (items.length === 0) {
+  if (withZh.length === 0) {
+    const demos = demoItems();
+    let demoZh = demos;
+    try {
+      const map = await translateTitlesToZhHant(demos.map((i) => i.title));
+      demoZh = demos.map((i) => {
+        const titleZh = map.get(i.title);
+        return titleZh ? { ...i, titleZh } : i;
+      });
+    } catch {
+      demoZh = demos;
+    }
     payload = {
-      items: demoItems(),
+      items: demoZh,
       asOf: new Date().toISOString(),
       source: "demo",
       error: true,
@@ -212,7 +236,7 @@ export async function loadNews(force = false): Promise<NewsPayload> {
     };
   } else {
     payload = {
-      items,
+      items: withZh,
       asOf: new Date().toISOString(),
       source: uniqueSources.join("+") || "rss",
       error: false,

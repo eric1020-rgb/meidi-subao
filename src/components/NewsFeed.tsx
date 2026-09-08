@@ -87,7 +87,7 @@ export default function NewsFeed() {
         <div>
           <h2 className="text-sm font-semibold text-ink">當日新聞 · Today&apos;s News</h2>
           <p className="text-[10px] text-ink-faint">
-            美股／財經頭條 · 約每 {REFRESH_MS / 1000}s 自動更新
+            美股／財經頭條（中英對照） · 約每 {REFRESH_MS / 1000}s 自動更新
             {data?.source ? ` · ${data.source}` : ""}
           </p>
         </div>
@@ -138,13 +138,15 @@ export default function NewsFeed() {
 
       <p className="border-t border-white/5 px-3 py-2 text-[10px] leading-relaxed text-ink-faint">
         新聞彙整僅供資訊參考，<strong className="text-ink-muted">並非投資建議</strong>
-        。標題來自公開 RSS，點擊將離開本站。News aggregated for information only — not investment advice.
+        。中文標題為機器翻譯（繁體），僅供參考；原文來自公開 RSS，點擊將離開本站。News
+        aggregated for information only — not investment advice. Chinese titles are machine-translated.
       </p>
     </section>
   );
 }
 
 function NewsRow({ item }: { item: NewsItem }) {
+  const hasZh = Boolean(item.titleZh && item.titleZh.trim() && item.titleZh !== item.title);
   return (
     <li>
       <a
@@ -153,7 +155,14 @@ function NewsRow({ item }: { item: NewsItem }) {
         rel="noopener noreferrer"
         className="block rounded-lg px-3 py-2.5 transition hover:bg-white/[0.04]"
       >
-        <div className="text-sm font-medium leading-snug text-ink">{item.title}</div>
+        {hasZh ? (
+          <>
+            <div className="text-sm font-medium leading-snug text-ink">{item.titleZh}</div>
+            <div className="mt-0.5 text-[11px] leading-snug text-ink-muted/90">{item.title}</div>
+          </>
+        ) : (
+          <div className="text-sm font-medium leading-snug text-ink">{item.title}</div>
+        )}
         <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[10px] text-ink-faint">
           <span className="rounded bg-white/5 px-1.5 py-0.5 font-medium text-ink-muted">{item.source}</span>
           <span className="tabular-nums" title={formatTime(item.publishedAt) + " HKT"}>

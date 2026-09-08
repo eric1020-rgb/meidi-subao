@@ -58,7 +58,10 @@ export interface VoteTally {
 
 export interface NewsItem {
   id: string;
+  /** Original English (or source-language) headline */
   title: string;
+  /** Traditional Chinese (zh-Hant / zh-TW) machine translation; omit if unavailable */
+  titleZh?: string;
   source: string;
   publishedAt: string;
   url: string;

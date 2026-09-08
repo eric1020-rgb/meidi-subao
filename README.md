@@ -48,10 +48,10 @@ npm start
 
 | Item | Value |
 |------|--------|
-| UI | Header tab **當日新聞** |
-| API | `GET /api/news` → `{ items, asOf, source, error? }` |
+| UI | Header tab **當日新聞** — Chinese title primary + English secondary |
+| API | `GET /api/news` → `{ items: [{ title, titleZh?, … }], asOf, source, error? }` |
 | Client refresh | ~90s auto + manual **重新整理** (`?refresh=1` bypasses short cache) |
-| Server cache | ~45s in-memory + fetch revalidate |
+| Server cache | ~45s in-memory + fetch revalidate; translations cached by title hash |
 
 ### Sources (free public RSS, no API key)
 
@@ -61,6 +61,15 @@ npm start
 - Investing.com news RSS
 
 Feeds are fetched server-side, parsed, deduped by title, sorted by time. Prefer same-UTC-day items; if sparse, fall back to latest headlines. If all upstream feeds fail, the API returns demo stubs with `error: true` so the page never crashes.
+
+### Headline translation (zh-Hant / Traditional Chinese)
+
+- Server-side when building `/api/news` — clients receive ready-made `titleZh`.
+- **Primary:** [MyMemory](https://mymemory.translated.net/) free public API (`en|zh-TW`), no user-provided API key.
+- **Fallback:** Google Translate unofficial `gtx` endpoint (demo-style; may rate-limit).
+- In-memory cache keyed by title hash; concurrency + timeouts so a slow translator cannot hang the feed.
+- If translation fails for an item, UI shows **English only** — never breaks the page.
+- **Limitations:** machine translation quality varies (finance jargon, tickers, proper nouns). Not human-edited; for reference only. Free tiers have daily quotas / rate limits.
 
 **Disclaimer:** aggregated for information only — not investment advice.
 
