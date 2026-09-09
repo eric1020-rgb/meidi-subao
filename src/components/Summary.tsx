@@ -5,6 +5,7 @@ import type {
   CalendarEvent,
   CalendarSummaryPayload,
   DailySummaryPayload,
+  HotStockItem,
   SummaryIndexRow,
   WeeklySummaryPayload,
 } from "@/lib/types";
@@ -89,6 +90,7 @@ export default function Summary() {
             sectorLaggards: [],
             topGainers: [],
             topLosers: [],
+            hotStocks: [],
             highlights: [{ text: "無法載入總結", kind: "neutral" }],
             error: true,
             message: "無法載入總結",
@@ -330,6 +332,56 @@ function MoverMini({
   );
 }
 
+function HotStocksList({ items }: { items: HotStockItem[] }) {
+  if (!items || items.length === 0) {
+    return <p className="px-1 py-2 text-xs text-ink-muted">暫無突出／熱門股資料</p>;
+  }
+  return (
+    <ul className="divide-y divide-white/5">
+      {items.map((h) => (
+        <li key={h.symbol} className="px-1 py-2.5">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5">
+            <span className="text-xs text-ink">
+              <span className="font-semibold">{h.symbol}</span>
+              <span className="ml-1.5 text-ink-muted">{h.name}</span>
+              {h.kind === "gainer" && (
+                <span className="ml-1.5 rounded bg-white/5 px-1 py-0.5 text-[9px] text-ink-faint">漲幅</span>
+              )}
+              {h.kind === "loser" && (
+                <span className="ml-1.5 rounded bg-white/5 px-1 py-0.5 text-[9px] text-ink-faint">跌幅</span>
+              )}
+              {h.kind === "active" && (
+                <span className="ml-1.5 rounded bg-white/5 px-1 py-0.5 text-[9px] text-ink-faint">活躍</span>
+              )}
+            </span>
+            <span className="text-xs font-semibold tabular-nums" style={{ color: pctColor(h.changePct) }}>
+              {formatPct(h.changePct)}
+            </span>
+          </div>
+          <p className="mt-1 text-[11px] leading-snug text-ink-muted">{h.reasonZh}</p>
+          {h.headline && (
+            <div className="mt-1">
+              {h.link ? (
+                <a
+                  href={h.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[10px] leading-snug text-ink-faint hover:text-ink-muted"
+                >
+                  {h.headline}
+                  <span className="ml-1">↗</span>
+                </a>
+              ) : (
+                <span className="text-[10px] leading-snug text-ink-faint">{h.headline}</span>
+              )}
+            </div>
+          )}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 function DailyPanel({ data }: { data: DailySummaryPayload | null }) {
   if (!data) return <p className="text-sm text-ink-muted">尚無每日總結</p>;
   return (
@@ -350,6 +402,12 @@ function DailyPanel({ data }: { data: DailySummaryPayload | null }) {
         <MoverMini title="漲幅摘要" items={data.topGainers} />
         <MoverMini title="跌幅摘要" items={data.topLosers} />
       </div>
+      <Card title="突出／熱門股">
+        <HotStocksList items={data.hotStocks || []} />
+        <p className="mt-2 px-1 text-[10px] leading-relaxed text-ink-faint">
+          理由依公開 RSS／Yahoo 相關新聞比對；找不到催化時會如實標示，並非投資建議。
+        </p>
+      </Card>
       <Card title="重點摘要">
         <HighlightList items={data.highlights} />
       </Card>

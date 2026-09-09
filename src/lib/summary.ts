@@ -3,6 +3,9 @@ import type {
   CalendarImportance,
   CalendarSummaryPayload,
   DailySummaryPayload,
+  HotStockItem,
+  MoverItem,
+  NewsItem,
   SummaryHighlight,
   SummaryIndexRow,
   WeeklySummaryPayload,
@@ -11,6 +14,7 @@ import { fetchQuotes } from "./data";
 import { SECTOR_ETFS } from "./sectors";
 import { loadMovers } from "./movers";
 import { loadNews } from "./news";
+import { buildHotStocks } from "./hotStocks";
 
 const USER_AGENT = "Mozilla/5.0 (compatible; MeidiSubao/1.0; +https://meidi-subao.vercel.app)";
 const FETCH_TIMEOUT_MS = 12_000;
@@ -237,8 +241,12 @@ export async function loadDailySummary(force = false): Promise<DailySummaryPaylo
 
   let topGainers: DailySummaryPayload["topGainers"] = [];
   let topLosers: DailySummaryPayload["topLosers"] = [];
+  let moverGainers: MoverItem[] = [];
+  let moverLosers: MoverItem[] = [];
   try {
     const movers = await loadMovers(force);
+    moverGainers = movers.gainers;
+    moverLosers = movers.losers;
     topGainers = movers.gainers.slice(0, 5).map((m) => ({
       symbol: m.symbol,
       name: m.name,
@@ -258,11 +266,25 @@ export async function loadDailySummary(force = false): Promise<DailySummaryPaylo
   }
 
   let newsTitles: string[] = [];
+  let newsItems: NewsItem[] = [];
   try {
     const news = await loadNews(false);
+    newsItems = news.items;
     newsTitles = news.items.slice(0, 4).map((i) => i.title);
   } catch {
     /* optional */
+  }
+
+  // Hot / standout stocks with grounded reasons — soft-fail never breaks wrap
+  let hotStocks: HotStockItem[] = [];
+  try {
+    hotStocks = await buildHotStocks({
+      gainers: moverGainers,
+      losers: moverLosers,
+      newsItems,
+    });
+  } catch {
+    hotStocks = [];
   }
 
   const payload: DailySummaryPayload = {
@@ -274,6 +296,7 @@ export async function loadDailySummary(force = false): Promise<DailySummaryPaylo
     sectorLaggards: laggards,
     topGainers,
     topLosers,
+    hotStocks,
     highlights: dailyHighlights(indices, leaders, laggards, newsTitles),
     error: error || undefined,
     message,

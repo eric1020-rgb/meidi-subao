@@ -109,6 +109,7 @@ Colors respect 台股紅漲／美股綠漲 setting (`--up` / `--down`).
 - Major indices: SPY / QQQ / DIA / IWM via Yahoo chart quotes
 - Sector ETF leaders & laggards (existing sector universe)
 - Top movers summary (reuses `/api/movers` logic)
+- **突出／熱門股 (`hotStocks`)** — notable gainers / losers / high-volume movers with short **zh-Hant** reasons grounded in free RSS + Yahoo search news (ticker / company-name match); honest “暫未找到明確新聞催化…” when no catalyst; machine-translate via existing news translate helper; soft-fail so wrap never breaks
 - Bullet highlights + recent RSS headlines
 
 ### Weekly wrap（每周總結）

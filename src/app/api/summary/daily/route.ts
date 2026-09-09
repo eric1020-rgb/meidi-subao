@@ -25,6 +25,7 @@ export async function GET(request: Request) {
         sectorLaggards: [],
         topGainers: [],
         topLosers: [],
+        hotStocks: [],
         highlights: [{ text: "無法載入每日總結", kind: "neutral" }],
         error: true,
         message: "Failed to load daily summary",

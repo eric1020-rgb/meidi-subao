@@ -110,6 +110,19 @@ export interface SummaryHighlight {
   kind?: "up" | "down" | "neutral" | "news";
 }
 
+/** Standout / hot stock with grounded move reason for daily wrap */
+export interface HotStockItem {
+  symbol: string;
+  name: string;
+  changePct: number;
+  /** Traditional Chinese reason (catalyst or honest no-news fallback) */
+  reasonZh: string;
+  /** Optional English source headline */
+  headline?: string;
+  link?: string;
+  kind?: "gainer" | "loser" | "active";
+}
+
 export interface DailySummaryPayload {
   asOf: string;
   source: string;
@@ -119,6 +132,8 @@ export interface DailySummaryPayload {
   sectorLaggards: SummaryIndexRow[];
   topGainers: { symbol: string; name: string; changePct: number }[];
   topLosers: { symbol: string; name: string; changePct: number }[];
+  /** Notable gainers / losers / volume movers with move reasons */
+  hotStocks: HotStockItem[];
   highlights: SummaryHighlight[];
   error?: boolean;
   message?: string;
